@@ -166,42 +166,21 @@ Open **Chams** from quick access or search, select **Fracture** under Through Wa
 
 The effect uses the existing through-walls entity mask. Its pattern and halo are screen-space, so cells stay aligned to the screen rather than wrapping around the model, and the halo is not scene lighting or bloom. The original Image and None modes and saved entity selections are preserved.
 
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:151dc20cfe04613e24c06068ae38c43e78afdc5c9a57e1e2cbfd8a2f6760e35e -->
+
 ## KillAura
 
-<!-- /coderabbit-ai-generated:v1 -->
+KillAura now uses Payload targeting and controls. It chooses one enemy using Closest or Lowest HP, with separate player, monster, animal and friend switches. Radius and Wall Radius measure player-to-entity position distance. Auto Swap supports Off, Normal (hotbar), and Inventory, preferring swords, tridents, axes, then maces. Inventory swaps require the player inventory menu and an empty cursor.
 
-<!-- coderabbit-ai-generated:v1 -->
+Rotation Mode supports None, Vanilla (visible camera rotation), and Payload (queued packet rotation). Rotation Steps defaults to 0.6 of the maximum turn per tick, and Rotation Priority defaults to 25. Legit requires the crosshair entity to match the selected target when the attack executes. Custom Delay is measured in seconds; otherwise the client attack cooldown is used. Super Mace sends Payload's raised-position packet sequence before a mace attack. Server acceptance has not been verified.
 
-<!-- coderabbit-ai-generated-section:v1:771373836e41a859446fddf2fda6e90f91293090bd8b642cfb6bfcebf90d5a02 -->
+This intentionally replaces the earlier multiple-target, hitbox/FOV/age/shield filters, tick-delay/TPS-sync, server cooldown estimate and swap-back settings. Existing settings with those names no longer configure KillAura. The module ID, selected-target access and attacking state remain available to combat visuals, Criticals and Highway Builder. Auto Eat and Auto Gap pause attacks. Deferred attacks check the player, world, target, weapon, slot, readiness and current activation before sending; each tick can spend the cooldown once.
 
-Targets come from a nearby spatial query. A bounded priority queue retains the best candidates with scores calculated once per candidate and stable entity-ID tie breaking. Keep Target retains a valid primary target. Field of View limits the horizontal targeting cone. Attack and wall ranges both measure from the player's eyes to the closest point on the target hitbox.
 
-<!-- coderabbit-ai-generated:v1 -->
-
-<!-- coderabbit-ai-generated-section:v1:1a675d516722e375269e4fd395ef060c2e3ab8b9ea0670cee18ee37768fb51b5 -->
-
-Aim Method defaults to Configured Part, using the existing Aim At choice. Closest Hitbox optionally aims at the nearest interior point of the target bounds, falling back to the configured part when your eyes are inside those bounds. It does not predict future movement or guarantee that the aim point is unobstructed. Visible Hitbox samples interior points in order of proximity and uses a collider raycast to choose an unobstructed point within the configured range. If no sample is visible, attacks still respect the configured wall range and fall back to the nearest point where wall attacks are allowed. The server may use different reach or visibility rules. Only On Look rechecks the selected crosshair entity when an attack is sent.
 
 <!-- /coderabbit-ai-generated:v1 -->
-
-<!-- coderabbit-ai-generated:v1 -->
-
-<!-- coderabbit-ai-generated-section:v1:00108da1fe3dbc37301570bdd1ec657b71a3819dfc73848ef2c2726fc1933c68 -->
-
-Vanilla attack cooldown is used by default. Custom delays use a tick clock that advances while paused; TPS Sync scales custom delays. Weapon switch delay is independent. Queued attacks recheck pause conditions, player/world identity, weapon components and slot, cooldown and target validity immediately before execution. Normal cooldowns are reserved once per tick; zero-delay custom batches retain multiple-target support. Changing ticks or stopping the module invalidates queued work. Swap Back restores a slot only while KillAura still owns the selected slot, preserving a manual slot change. Friend, entity type, age, named/tamed entity, and shield filters still apply.
-
-Minecraft 26.3 uses two phases: the beginning of the client tick selects targets and handles weapon selection; immediately before movement submission, KillAura revalidates targets and checks the updated player cooldown. Its rotation is queued before Rotations prepares movement, and the attack callback executes after the rotation packet. This avoids making readiness decisions from the previous player tick while retaining the once-per-tick attack reservation. The vehicle hooks now target 26.3 `LocalPlayer.sendChanges`. Deferred Jump/MiniJump critical attacks expire after 30 client ticks and are discarded on player/world, target identity, mode, selected-slot or weapon changes, death, disconnect or module shutdown. This does not establish that packet critical modes work on any particular server.
-
-SDL keyboard scancodes and mouse buttons now have separate state. Releases update while widget shortcut dispatch is suppressed; losing focus clears held input. Existing raw GLFW bindings are migrated by key meaning. Minecraft 26.3 removed the old hand-specific swing packet; animation uses the held item’s attack animation and server notification uses the vanilla punch packet. The server punch has no offhand field. These are compatibility and scheduling changes, not a measured reduction in network latency or a guarantee of combat outcomes.
-
-<!-- /coderabbit-ai-generated:v1 -->
-
-<!-- /coderabbit-ai-generated:v1 -->
-
-<!-- coderabbit-ai-generated:v1 -->
-
-<!-- coderabbit-ai-generated-section:v1:24b557bdf326587808febe0c102d4043e8016695ebd496fa08fd7997169073c3 -->
-
 ## Chest Stealer
 
 Enable **Chest Stealer** in Misc or search for it, then open a single or double chest-style container. It moves up to three stacks per tick by default; adjust the batch size and delay in its settings. It waits for container contents, an empty cursor and available inventory space. It pauses while Inventory Tweaks auto steal or auto dump is enabled. Generic chest-style menus can also be used by server plugins.

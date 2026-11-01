@@ -11,6 +11,7 @@ import com.gaspoweredcake.client33.Client33;
 import com.gaspoweredcake.client33.events.entity.DropItemsEvent;
 import com.gaspoweredcake.client33.events.entity.player.ClipAtLedgeEvent;
 import com.gaspoweredcake.client33.systems.modules.Modules;
+import com.gaspoweredcake.client33.systems.modules.combat.NoAttackDelay;
 import com.gaspoweredcake.client33.systems.modules.movement.Flight;
 import com.gaspoweredcake.client33.systems.modules.movement.NoSlow;
 import com.gaspoweredcake.client33.systems.modules.movement.Sprint;
@@ -43,6 +44,13 @@ public abstract class PlayerMixin extends LivingEntity {
 
     protected PlayerMixin(EntityType<? extends LivingEntity> entityType, Level world) {
         super(entityType, world);
+    }
+
+    @Inject(method = "getAttackStrengthScale", at = @At("HEAD"), cancellable = true)
+    private void client33$attackCooldown(float partialTick, CallbackInfoReturnable<Float> cir) {
+        if ((Object) this != mc.player || Modules.get() == null) return;
+        NoAttackDelay module = Modules.get().get(NoAttackDelay.class);
+        if (module != null && module.isActive()) cir.setReturnValue(module.progress());
     }
 
     @Inject(method = "isStayingOnGroundSurface", at = @At("HEAD"), cancellable = true)

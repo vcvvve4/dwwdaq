@@ -402,6 +402,7 @@ public class Modules extends System<Modules> {
         add(new Hitboxes());
         add(new HoleFiller());
         add(new KillAura());
+        add(new NoAttackDelay());
         add(new ShieldPredict());
         add(new Offhand());
         add(new Quiver());
@@ -442,6 +443,7 @@ public class Modules extends System<Modules> {
         add(new PotionSaver());
         add(new Reach());
         add(new Rotation());
+        add(new YawLock());
         add(new SpeedMine());
     }
 
@@ -464,6 +466,7 @@ public class Modules extends System<Modules> {
         add(new Jesus());
         add(new LongJump());
         add(new NoFall());
+        add(new NoJumpDelay());
         add(new NoSlow());
         add(new Parkour());
         add(new ReverseStep());
@@ -550,6 +553,7 @@ public class Modules extends System<Modules> {
         add(new SpawnerScanner());
         add(new SpawnProofer());
         add(new Timer());
+        add(new FluxTimer());
         add(new VeinMiner());
 
         if (BaritoneUtils.IS_AVAILABLE) {
